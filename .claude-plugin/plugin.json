@@ -1,0 +1,13 @@
+{
+  "name": "design-god-mode",
+  "description": "Claude Design God Mode: nine lean design skills that score, direct, redesign and polish any website, CRM, landing page, dashboard or game UI without breaking it.",
+  "version": "1.0.0",
+  "author": {
+    "name": "F0rger",
+    "email": "drummerforger@gmail.com"
+  },
+  "homepage": "https://github.com/F0rger123/CLAUDE-DESIGN-GOD-MODE",
+  "repository": "https://github.com/F0rger123/CLAUDE-DESIGN-GOD-MODE",
+  "license": "MIT",
+  "keywords": ["design", "frontend", "ui", "ux", "redesign", "landing-page", "crm", "dashboard", "game-ui", "skills"]
+}

@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Crewline · Scheduling, quotes and invoices for trade crews</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..900&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* Design: Crewline
+     Read: field-service CRM for HVAC, plumbing and electrical crews. Mode: Persuade.
+     Family: Workwear, bent toward the dispatch board and the paper job ticket. */
+  :root {
+    --bg: #F1F2EE;
+    --surface: #FFFFFF;
+    --surface-2: #E6E8E2;
+    --ink: #15212B;
+    --ink-muted: #56636E;
+    --border: #D5D8D0;
+    --accent: #F5A30A;
+    --accent-ink: #15212B;
+    --blue: #2B6CB0;
+    --green: #2F855A;
+    --red: #C53030;
+    --display: "Archivo", system-ui, sans-serif;
+    --body: "Public Sans", system-ui, sans-serif;
+    --r-sm: 4px; --r-md: 8px; --r-lg: 14px;
+    --shadow: 0 1px 0 rgba(21,33,43,.06), 0 12px 32px -12px rgba(21,33,43,.22);
+    --ease-out: cubic-bezier(.23,1,.32,1);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { font: 400 17px/1.6 var(--body); color: var(--ink); background: var(--bg); -webkit-font-smoothing: antialiased; }
+  ::selection { background: var(--accent); color: var(--accent-ink); }
+  a { color: inherit; }
+  :focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; border-radius: var(--r-sm); }
+  h1, h2, h3 { font-family: var(--display); line-height: 1.02; letter-spacing: -.02em; text-wrap: balance; }
+  p { text-wrap: pretty; }
+  .wrap { width: min(1240px, 100% - 40px); margin-inline: auto; }
+
+  /* Buttons */
+  .btn { display: inline-flex; align-items: center; gap: 10px; height: 52px; padding: 0 22px; border-radius: var(--r-md); font: 600 16px/1 var(--body); text-decoration: none; transition: transform 120ms var(--ease-out), background-color 150ms ease; }
+  .btn:active { transform: scale(.97); }
+  .btn-primary { background: var(--accent); color: var(--accent-ink); box-shadow: inset 0 -3px 0 rgba(21,33,43,.18); }
+  .btn-primary:hover { background: #FFB21F; }
+  .btn-quiet { color: var(--ink); border: 1.5px solid var(--ink); }
+  .btn-quiet:hover { background: var(--ink); color: var(--bg); }
+
+  /* Header */
+  header { position: sticky; top: 0; z-index: 10; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); }
+  .bar { display: flex; align-items: center; gap: 32px; height: 68px; }
+  .mark { display: flex; align-items: center; gap: 10px; font: 800 21px/1 var(--display); font-stretch: 112%; text-decoration: none; letter-spacing: -.01em; }
+  .mark i { width: 22px; height: 22px; background: var(--accent); border: 3px solid var(--ink); border-radius: 3px; box-shadow: 3px 3px 0 var(--ink); }
+  .bar nav { display: flex; gap: 26px; margin-right: auto; }
+  .bar nav a, .login { text-decoration: none; color: var(--ink-muted); font-weight: 500; font-size: 15px; }
+  .bar nav a:hover, .login:hover { color: var(--ink); }
+  .bar .btn { height: 42px; font-size: 15px; padding: 0 16px; }
+
+  /* Hero */
+  .hero { padding: 72px 0 0; }
+  .hero-copy { display: grid; grid-template-columns: 1.15fr .85fr; gap: 48px; align-items: end; }
+  .hero h1 { font-size: clamp(3rem, 6.4vw, 6rem); font-weight: 850; font-stretch: 90%; }
+  .hero h1 span { display: block; color: var(--ink-muted); font-weight: 600; }
+  .lede { font-size: 19px; color: var(--ink-muted); max-width: 46ch; margin-bottom: 26px; }
+  .actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  .fine { margin-top: 14px; font-size: 14px; color: var(--ink-muted); }
+
+  /* Dispatch board (hero visual) */
+  .board { margin-top: 56px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg) var(--r-lg) 0 0; border-bottom: 0; box-shadow: var(--shadow); overflow: hidden; }
+  .board-top { display: flex; align-items: center; gap: 16px; padding: 14px 20px; border-bottom: 1px solid var(--border); font-size: 14px; }
+  .board-top b { font: 700 16px/1 var(--display); }
+  .pill { padding: 4px 10px; border-radius: 99px; background: var(--surface-2); color: var(--ink-muted); font-size: 13px; font-weight: 500; }
+  .pill.live { background: #E3F1E8; color: var(--green); }
+  .board-top .spacer { margin-left: auto; }
+  .grid { display: grid; grid-template-columns: 190px 1fr; font-size: 13px; }
+  .crew div { white-space: nowrap; }
+  .hours { display: grid; grid-template-columns: repeat(10, 1fr); border-bottom: 1px solid var(--border); color: var(--ink-muted); font-variant-numeric: tabular-nums; }
+  .hours span { padding: 8px 10px; border-left: 1px solid var(--border); }
+  .crew { display: flex; align-items: center; gap: 10px; padding: 0 20px; height: 64px; border-bottom: 1px solid var(--border); font-weight: 600; }
+  .crew small { display: block; font-weight: 400; color: var(--ink-muted); font-size: 12px; }
+  .ava { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font: 700 12px/1 var(--display); color: var(--surface); }
+  .lane { position: relative; height: 64px; border-bottom: 1px solid var(--border); background: repeating-linear-gradient(90deg, transparent 0 calc(10% - 1px), var(--border) calc(10% - 1px) 10%); }
+  .job { position: absolute; top: 9px; bottom: 9px; padding: 7px 10px; border-radius: var(--r-sm); border-left: 4px solid; font-size: 12px; line-height: 1.3; overflow: hidden; white-space: nowrap; }
+  .job b { display: block; font-weight: 600; font-size: 13px; text-overflow: ellipsis; overflow: hidden; }
+  .job.hvac { background: #E7EFF8; border-color: var(--blue); }
+  .job.plumb { background: #E3F1E8; border-color: var(--green); }
+  .job.elec { background: #FDF0D5; border-color: var(--accent); }
+  .job.urgent { background: #FBE4E4; border-color: var(--red); }
+  .now { position: absolute; top: 0; bottom: 0; left: 41%; width: 2px; background: var(--red); z-index: 2; }
+  .now::before { content: ""; position: absolute; top: -4px; left: -4px; width: 10px; height: 10px; border-radius: 50%; background: var(--red); }
+  /* Signature moment: the emergency call drops onto the board */
+  .job.drop { animation: drop 700ms var(--ease-out) 600ms both; }
+  @keyframes drop { from { opacity: 0; transform: translateY(-26px) scale(.96); } to { opacity: 1; transform: none; } }
+
+  /* Trades strip */
+  .trades { background: var(--ink); color: var(--bg); }
+  .trades .wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 36px; padding: 22px 0; font: 700 15px/1 var(--display); font-stretch: 115%; letter-spacing: .01em; }
+  .trades span:first-child { color: #9AA6B0; font: 500 14px/1 var(--body); }
+
+  /* Feature rows */
+  .section { padding: 120px 0; }
+  .section-head { max-width: 760px; margin-bottom: 64px; }
+  .section-head h2 { font-size: clamp(2.2rem, 4vw, 3.6rem); font-weight: 800; font-stretch: 92%; margin-bottom: 18px; }
+  .section-head p { color: var(--ink-muted); font-size: 19px; max-width: 56ch; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: center; padding: 48px 0; border-top: 1px solid var(--border); }
+  .row:nth-child(even) .row-copy { order: 2; }
+  .row h3 { font-size: 32px; font-weight: 750; margin-bottom: 14px; }
+  .row p { color: var(--ink-muted); max-width: 44ch; }
+  .row ul { list-style: none; margin-top: 22px; display: grid; gap: 10px; }
+  .row li { display: flex; gap: 10px; align-items: baseline; font-size: 16px; }
+  .row li::before { content: ""; flex: none; width: 10px; height: 10px; background: var(--accent); border: 2px solid var(--ink); border-radius: 2px; transform: translateY(1px); }
+
+  /* Job ticket card */
+  .ticket { background: var(--surface); border-radius: var(--r-md); box-shadow: var(--shadow); padding: 26px; position: relative; font-size: 15px; }
+  .ticket::after { content: ""; position: absolute; left: 0; right: 0; bottom: -8px; height: 16px; background: radial-gradient(circle at 8px 0, var(--bg) 6px, transparent 6.5px) 0 0 / 16px 16px repeat-x; }
+  .t-head { display: flex; justify-content: space-between; align-items: start; margin-bottom: 18px; }
+  .t-head b { font: 800 20px/1.1 var(--display); }
+  .t-head small { display: block; color: var(--ink-muted); font-size: 13px; margin-top: 4px; }
+  .badge { padding: 5px 10px; border-radius: var(--r-sm); font-size: 12px; font-weight: 600; }
+  .badge.ok { background: #E3F1E8; color: var(--green); }
+  .badge.sent { background: #E7EFF8; color: var(--blue); }
+  .lines { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+  .lines td { padding: 10px 0; border-top: 1px dashed var(--border); }
+  .lines td:last-child { text-align: right; }
+  .lines tr.total td { border-top: 2px solid var(--ink); font-weight: 700; font-size: 17px; }
+  .sign { margin-top: 18px; display: flex; justify-content: space-between; align-items: end; color: var(--ink-muted); font-size: 13px; }
+  .sign em { font: italic 500 26px/1 Georgia, serif; color: var(--ink); }
+
+  /* Text thread */
+  .thread { display: grid; gap: 10px; max-width: 420px; margin-inline: auto; }
+  .msg { padding: 12px 16px; border-radius: 16px; font-size: 15px; max-width: 85%; box-shadow: 0 1px 0 rgba(21,33,43,.06); }
+  .msg.out { background: var(--ink); color: var(--bg); justify-self: end; border-bottom-right-radius: 4px; }
+  .msg.in { background: var(--surface); justify-self: start; border-bottom-left-radius: 4px; }
+  .msg small { display: block; opacity: .6; font-size: 12px; margin-top: 4px; }
+
+  /* A day on Crewline */
+  .day { background: var(--surface); border-block: 1px solid var(--border); }
+  .timeline { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; counter-reset: t; }
+  .step { padding: 28px 28px 32px 0; border-top: 3px solid var(--ink); margin-right: 24px; }
+  .step time { display: block; font: 800 36px/1 var(--display); font-stretch: 80%; font-variant-numeric: tabular-nums; margin: 18px 0 10px; }
+  .step p { color: var(--ink-muted); font-size: 16px; }
+  .step:last-child time { color: var(--green); }
+
+  /* Pricing */
+  .plans { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 920px; }
+  .plan { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 34px; }
+  .plan.pick { border: 2px solid var(--ink); box-shadow: 6px 6px 0 var(--ink); }
+  .plan h3 { font-size: 24px; display: flex; justify-content: space-between; align-items: center; }
+  .plan .price { font: 850 56px/1 var(--display); font-stretch: 85%; margin: 18px 0 4px; font-variant-numeric: tabular-nums; }
+  .plan .price small { font: 500 16px var(--body); color: var(--ink-muted); }
+  .plan > p { color: var(--ink-muted); font-size: 15px; margin-bottom: 22px; }
+  .plan ul { list-style: none; display: grid; gap: 10px; margin-bottom: 28px; font-size: 16px; }
+  .plan li { padding-left: 24px; position: relative; }
+  .plan li::before { content: ""; position: absolute; left: 2px; top: .45em; width: 12px; height: 7px; border-left: 2.5px solid var(--green); border-bottom: 2.5px solid var(--green); transform: rotate(-45deg); }
+  .plan .btn { width: 100%; justify-content: center; }
+
+  /* Final CTA */
+  .final { background: var(--ink); color: var(--bg); padding: 110px 0; }
+  .final .wrap { display: grid; grid-template-columns: 1.2fr .8fr; gap: 40px; align-items: end; }
+  .final h2 { font-size: clamp(2.4rem, 5vw, 4.6rem); font-weight: 850; font-stretch: 90%; }
+  .final p { color: #AEB8C1; margin-bottom: 24px; }
+  footer { padding: 36px 0; font-size: 14px; color: var(--ink-muted); }
+  footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .bar nav, .login { display: none; }
+    .bar { justify-content: space-between; }
+    .hero { padding-top: 44px; }
+    .hero-copy, .row, .final .wrap, .plans { grid-template-columns: 1fr; gap: 28px; }
+    .row:nth-child(even) .row-copy { order: 0; }
+    .timeline { grid-template-columns: 1fr 1fr; }
+    .grid { grid-template-columns: 112px 1fr; }
+    .crew { padding: 0 12px; font-size: 12px; }
+    .crew small, .ava { display: none; }
+    .hours span:nth-child(even) { visibility: hidden; }
+    .board-top .pill:not(.live) { display: none; }
+    .section { padding: 80px 0; }
+  }
+  @media (max-width: 520px) {
+    body { font-size: 16px; }
+    .timeline { grid-template-columns: 1fr; }
+    .board { margin-inline: -20px; border-radius: 0; }
+    .job { padding: 6px 7px; }
+    .job span { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .01ms !important; animation-delay: 0ms !important; transition-duration: .01ms !important; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap bar">
+    <a class="mark" href="#"><i aria-hidden="true"></i>Crewline</a>
+    <nav aria-label="Main"><a href="#features">Features</a><a href="#day">How it works</a><a href="#pricing">Pricing</a></nav>
+    <a class="login" href="#">Log in</a>
+    <a class="btn btn-primary" href="#start">Start free trial</a>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero-copy">
+        <h1>Every crew. Every job. <span>One board.</span></h1>
+        <div>
+          <p class="lede">Crewline schedules your techs, sends quotes from the driveway and gets invoices paid before the van is back in the yard.</p>
+          <div class="actions">
+            <a class="btn btn-primary" href="#start">Start your 14-day trial</a>
+            <a class="btn btn-quiet" href="#day">See a day on Crewline</a>
+          </div>
+          <p class="fine">No card needed. Most shops are scheduling by lunch.</p>
+        </div>
+      </div>
+
+      <div class="board" role="img" aria-label="Crewline dispatch board showing four crews and today's jobs, with an urgent no-heat call just added">
+        <div class="board-top">
+          <b>Today, Tue 14 Oct</b>
+          <span class="pill live">4 crews on the road</span>
+          <span class="pill">11 jobs</span>
+          <span class="pill">$9,420 booked</span>
+          <span class="spacer"></span>
+        </div>
+        <div class="grid">
+          <div></div>
+          <div class="hours"><span>7a</span><span>8a</span><span>9a</span><span>10a</span><span>11a</span><span>12p</span><span>1p</span><span>2p</span><span>3p</span><span>4p</span></div>
+
+          <div class="crew"><span class="ava" style="background:#2B6CB0">MR</span><div>Mike R.<small>HVAC · Van 2</small></div></div>
+          <div class="lane"><div class="now"></div>
+            <div class="job hvac" style="left:1%;width:22%"><b>Furnace tune-up</b><span>Alvarez · Oak St</span></div>
+            <div class="job urgent drop" style="left:42%;width:26%"><b>No heat, urgent</b><span>Patel · Maple Ave</span></div>
+            <div class="job hvac" style="left:71%;width:27%"><b>AC install, phase 2</b><span>Greene · Ridge Rd</span></div>
+          </div>
+
+          <div class="crew"><span class="ava" style="background:#2F855A">DS</span><div>Dana S.<small>Plumbing · Van 4</small></div></div>
+          <div class="lane">
+            <div class="job plumb" style="left:1%;width:31%"><b>Water heater swap</b><span>Kim · 5th St</span></div>
+            <div class="job plumb" style="left:41%;width:18%"><b>Leak check</b><span>Ortiz · Pine Ct</span></div>
+            <div class="job plumb" style="left:62%;width:20%"><b>Drain clear</b><span>Bell · Elm St</span></div>
+          </div>
+
+          <div class="crew"><span class="ava" style="background:#B7791F">JT</span><div>Jo T.<small>Electrical · Van 1</small></div></div>
+          <div class="lane">
+            <div class="job elec" style="left:11%;width:40%"><b>Panel upgrade, 200A</b><span>Nguyen · Hill Rd</span></div>
+            <div class="job elec" style="left:62%;width:16%"><b>EV charger quote</b><span>Ford · Lake Dr</span></div>
+          </div>
+
+          <div class="crew"><span class="ava" style="background:#56636E">AK</span><div>Andre K.<small>HVAC · Van 3</small></div></div>
+          <div class="lane">
+            <div class="job hvac" style="left:21%;width:20%"><b>Duct cleaning</b><span>Moss · Birch Ln</span></div>
+            <div class="job hvac" style="left:51%;width:30%"><b>Heat pump service</b><span>Price · Cedar St</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="trades"><div class="wrap"><span>Built for</span><span>HVAC</span><span>Plumbing</span><span>Electrical</span><span>Roofing</span><span>Pest control</span><span>Pool service</span></div></div>
+
+  <section class="section" id="features">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>Less office time. More paid hours.</h2>
+        <p>The three jobs that eat your evenings, done from the truck in minutes.</p>
+      </div>
+
+      <div class="row">
+        <div class="row-copy">
+          <h3>Quote from the driveway</h3>
+          <p>Build the quote on your phone with your own price book, show good-better-best options, and get it signed before you leave.</p>
+          <ul><li>Your prices, parts and labour rates</li><li>Photos and notes on every line</li><li>Customer signs on screen or by text</li></ul>
+        </div>
+        <div class="ticket" aria-label="Example signed quote">
+          <div class="t-head"><div><b>Quote #1042</b><small>Patel residence · Maple Ave</small></div><span class="badge ok">Approved</span></div>
+          <table class="lines">
+            <tr><td>Furnace igniter replacement</td><td>$285.00</td></tr>
+            <tr><td>Flame sensor clean and test</td><td>$95.00</td></tr>
+            <tr><td>After-hours call</td><td>$120.00</td></tr>
+            <tr class="total"><td>Total</td><td>$500.00</td></tr>
+          </table>
+          <div class="sign"><span>Signed 2:51 pm</span><em>R. Patel</em></div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="row-copy">
+          <h3>Get paid on site</h3>
+          <p>Turn the approved quote into an invoice with one tap. Take a card on the spot or text a payment link that works on any phone.</p>
+          <ul><li>Card, ACH and tap to pay</li><li>Automatic reminders for unpaid invoices</li><li>Syncs to QuickBooks every night</li></ul>
+        </div>
+        <div class="ticket" aria-label="Example paid invoice">
+          <div class="t-head"><div><b>Invoice #2207</b><small>Kim residence · 5th St</small></div><span class="badge ok">Paid</span></div>
+          <table class="lines">
+            <tr><td>50 gal water heater, installed</td><td>$1,640.00</td></tr>
+            <tr><td>Haul away old unit</td><td>$75.00</td></tr>
+            <tr><td>Permit</td><td>$125.00</td></tr>
+            <tr class="total"><td>Paid by card</td><td>$1,840.00</td></tr>
+          </table>
+          <div class="sign"><span>Paid 11:18 am, 6 minutes after the job closed</span></div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="row-copy">
+          <h3>Customers always know when you will arrive</h3>
+          <p>Crewline texts the customer when the tech heads over, with a name, a photo and a live arrival time. Fewer "where are you?" calls to the office.</p>
+          <ul><li>On-the-way and arrival texts</li><li>Two-way texting from one shop number</li><li>Review request after every paid job</li></ul>
+        </div>
+        <div class="thread" aria-label="Example text conversation with a customer">
+          <div class="msg in">Hi, this is Crewline for Northside Heating. Mike is on the way and should arrive around 2:40 pm.<small>2:12 pm</small></div>
+          <div class="msg out">Great, the side gate is open.<small>2:13 pm</small></div>
+          <div class="msg in">Mike has arrived. Your quote is ready to review: crewl.in/q/1042<small>2:41 pm</small></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section day" id="day">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>A day on Crewline</h2>
+        <p>What changes for a four-truck shop in the first week.</p>
+      </div>
+      <div class="timeline">
+        <div class="step"><time>6:45</time><p>Each tech opens the app and sees their route, job notes and parts list. No morning phone tree.</p></div>
+        <div class="step"><time>9:30</time><p>An urgent no-heat call comes in. The office drops it onto the closest crew's board.</p></div>
+        <div class="step"><time>2:51</time><p>The customer signs the quote on the tech's phone. Work starts right away.</p></div>
+        <div class="step"><time>3:40</time><p>Invoice paid by card before the tech leaves the driveway.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="pricing">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>Simple pricing per tech</h2>
+        <p>Office users are free. Cancel any time.</p>
+      </div>
+      <div class="plans">
+        <div class="plan">
+          <h3>Crew</h3>
+          <div class="price">$39 <small>per tech / month</small></div>
+          <p>For owner-operators and small crews.</p>
+          <ul><li>Scheduling and dispatch board</li><li>Quotes and invoices</li><li>Card and ACH payments</li><li>Customer texts</li></ul>
+          <a class="btn btn-quiet" href="#start">Start free trial</a>
+        </div>
+        <div class="plan pick">
+          <h3>Shop <span class="badge sent">Most shops pick this</span></h3>
+          <div class="price">$69 <small>per tech / month</small></div>
+          <p>For growing shops with an office.</p>
+          <ul><li>Everything in Crew</li><li>Price book with good-better-best</li><li>Maintenance plans and reminders</li><li>QuickBooks sync and reports</li></ul>
+          <a class="btn btn-primary" href="#start">Start free trial</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="final" id="start">
+    <div class="wrap">
+      <h2>Put tomorrow's jobs on the board tonight.</h2>
+      <div>
+        <p>Import your customers from a spreadsheet, add your crews, and send your first quote today.</p>
+        <a class="btn btn-primary" href="#">Start your 14-day trial</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer><div class="wrap"><span>© 2026 Crewline</span><span>Crewline is a fictional product made to demo Claude Design God Mode.</span></div></footer>
+</body>
+</html>

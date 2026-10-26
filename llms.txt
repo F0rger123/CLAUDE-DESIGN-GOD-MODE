@@ -1,0 +1,25 @@
+# Claude Design God Mode
+
+> A Claude Code plugin of nine lean design skills. It scores a website, CRM, app, landing page or game UI out of 100, picks a direction that fits the product, and upgrades the design in place without breaking behaviour.
+
+Install in Claude Code: `/plugin marketplace add F0rger123/CLAUDE-DESIGN-GOD-MODE` then `/plugin install design-god-mode@design-god-mode`. Other agents: copy `skills/` into the project and follow `skills/god-mode/SKILL.md`.
+
+## Start here
+- [AGENTS.md](https://raw.githubusercontent.com/F0rger123/CLAUDE-DESIGN-GOD-MODE/main/AGENTS.md): setup guide, questions to ask, safety rules
+- [README](https://raw.githubusercontent.com/F0rger123/CLAUDE-DESIGN-GOD-MODE/main/README.md): overview and before/after demo
+
+## Skills
+- [god-mode](https://raw.githubusercontent.com/F0rger123/CLAUDE-DESIGN-GOD-MODE/main/skills/god-mode/SKILL.md): full pipeline and router
+- [audit](https://raw.githubusercontent.com/F0rger123/CLAUDE-DESIGN-GOD-MODE/main/skills/audit/SKILL.md): score out of 100 and ranked fixes
+- [direction](https://raw.githubusercontent.com/F0rger123/CLAUDE-DESIGN-GOD-MODE/main/skills/direction/SKILL.md): token plan (colour, type, spacing, motion)
+- [redesign](https://raw.githubusercontent.com/F0rger123/CLAUDE-DESIGN-GOD-MODE/main/skills/redesign/SKILL.md): safe in-place restyle of existing code
+- [landing](https://raw.githubusercontent.com/F0rger123/CLAUDE-DESIGN-GOD-MODE/main/skills/landing/SKILL.md): landing and marketing pages
+- [app-ui](https://raw.githubusercontent.com/F0rger123/CLAUDE-DESIGN-GOD-MODE/main/skills/app-ui/SKILL.md): CRMs, dashboards, tables, forms
+- [game-ui](https://raw.githubusercontent.com/F0rger123/CLAUDE-DESIGN-GOD-MODE/main/skills/game-ui/SKILL.md): game menus, HUDs and feedback
+- [motion](https://raw.githubusercontent.com/F0rger123/CLAUDE-DESIGN-GOD-MODE/main/skills/motion/SKILL.md): animation rules
+- [polish](https://raw.githubusercontent.com/F0rger123/CLAUDE-DESIGN-GOD-MODE/main/skills/polish/SKILL.md): final quality checklist
+
+## References
+- [styles](https://raw.githubusercontent.com/F0rger123/CLAUDE-DESIGN-GOD-MODE/main/skills/direction/references/styles.md)
+- [color](https://raw.githubusercontent.com/F0rger123/CLAUDE-DESIGN-GOD-MODE/main/skills/direction/references/color.md)
+- [type](https://raw.githubusercontent.com/F0rger123/CLAUDE-DESIGN-GOD-MODE/main/skills/direction/references/type.md)
